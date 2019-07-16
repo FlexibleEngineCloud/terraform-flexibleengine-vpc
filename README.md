@@ -6,7 +6,7 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 
 ```hcl
 module "vpc" {
-  source = "modules/terraform-fe-vpc"
+  source = "terraform-flexibleengine-modules/terraform-fe-vpc"
 
   vpc_name = "my-vpc"
   vpc_cidr = "10.0.0.0/16"
