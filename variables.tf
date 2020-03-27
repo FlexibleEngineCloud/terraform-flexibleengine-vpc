@@ -68,6 +68,24 @@ variable "nat_gateway_subnet_name" {
   type        = string
 }
 
+variable "new_eip" {
+  description = "Whether or not attach new Elastic IP (public IP) to NAT Gateway"
+  default     = false
+  type        = bool
+}
+
+variable "eip_bandwidth" {
+  description = "Bandwidth of the EIP in Mbit/s"
+  default = null
+  type        = number
+}
+
+variable "existing_eip_id" {
+  description = "ID of an existing EIP"
+  default = null
+  type        = string
+}
+
 variable "eip_pool_name" {
   description = "Name of eip pool"
   default     = "admin_external_net"
