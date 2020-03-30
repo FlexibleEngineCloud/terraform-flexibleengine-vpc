@@ -18,3 +18,7 @@ output "network_ids" {
   value       = flexibleengine_vpc_subnet_v1.vpc_subnets.*.id
 }
 
+output "snat_eip" {
+  description = "The Public IP adress of the SNAT rule"
+  value       = var.new_eip ? [for publicip in flexibleengine_vpc_eip_v1.new_eip.*.publicip : lookup(element(publicip, 0), "ip_address")] : null
+}
