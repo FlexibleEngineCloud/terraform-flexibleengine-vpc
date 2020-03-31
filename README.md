@@ -11,7 +11,7 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 >
 > Thus, ECSs outbound public IP will be replaced by a new one.
 >
-> But now you can reserve pbulbic IP thanks to terraform-flexibleegine-eip module and assign IT to your SNAT rule with this terraform-flexibleegine-vpc module.
+> But now, you can reserve public IP (EIP) thanks to terraform-flexibleegine-eip module and assign it to your SNAT rules with this terraform-flexibleegine-vpc module.
 
 ## Usage : Terraform
 
