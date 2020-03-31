@@ -19,7 +19,7 @@ module "vpc" {
   vpc_snat_subnets = ["subnet-0"]
 
   enable_nat_gateway = true
-  new_eip       = true
+  existing_eip_id         = "<EIP_ID>"
   eip_bandwidth = 500
   nat_gateway_name = "natg-0"
   nat_gateway_type = "1"

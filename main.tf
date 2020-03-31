@@ -52,11 +52,18 @@ data "flexibleengine_vpc_subnet_v1" "snat_subnets" {
   depends_on = [flexibleengine_vpc_subnet_v1.vpc_subnets]
 }
 
-resource "flexibleengine_networking_floatingip_v2" "eip" {
+resource "flexibleengine_vpc_eip_v1" "new_eip" {
   # Create the EIP for SNAT rule
-  count = var.create_vpc && var.enable_nat_gateway ? 1 : 0
-
-  pool = var.eip_pool_name
+  count = var.create_vpc && var.enable_nat_gateway && var.new_eip ? 1 : 0
+  publicip {
+    type = "5_bgp"
+  }
+  bandwidth {
+    name        = "bandwidth-${var.nat_gateway_name}"
+    size        = var.eip_bandwidth
+    share_type  = "PER"
+    charge_mode = "traffic"
+  }
 }
 
 resource "flexibleengine_nat_snat_rule_v2" "snat" {
@@ -65,7 +72,7 @@ resource "flexibleengine_nat_snat_rule_v2" "snat" {
 
   nat_gateway_id = flexibleengine_nat_gateway_v2.nat_gateway[0].id
   network_id     = data.flexibleengine_vpc_subnet_v1.snat_subnets[count.index].id
-  floating_ip_id = flexibleengine_networking_floatingip_v2.eip[0].id
+  floating_ip_id = var.new_eip ? flexibleengine_vpc_eip_v1.new_eip[0].id : var.existing_eip_id
 
   lifecycle {
     ignore_changes = [network_id]
