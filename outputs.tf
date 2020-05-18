@@ -3,6 +3,11 @@ output "vpc_id" {
   value       = flexibleengine_vpc_v1.vpc[0].id
 }
 
+output "vpc_name" {
+  description = "Name of the created vpc"
+  value       = flexibleengine_vpc_v1.vpc[0].name
+}
+
 output "subnet_ids" {
   description = "list of IDs of the created subnets"
   value       = flexibleengine_vpc_subnet_v1.vpc_subnets.*.subnet_id
