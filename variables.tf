@@ -27,9 +27,9 @@ variable "vpc_subnets" {
 }
 
 variable "vpc_snat_subnets" {
-  description = "json description of subnets included in SNAT rules"
+  description = "list of snat subnet names"
   default     = []
-  type        = list(string)
+  type = list
 }
 
 variable "primary_dns" {

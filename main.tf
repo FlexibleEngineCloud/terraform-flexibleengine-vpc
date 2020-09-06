@@ -9,11 +9,11 @@ resource "flexibleengine_vpc_v1" "vpc" {
 
 resource "flexibleengine_vpc_subnet_v1" "vpc_subnets" {
   # Create subnets
-  count = var.create_vpc && length(var.vpc_subnets) > 0 ? length(var.vpc_subnets) : 0
-
-  name          = var.vpc_subnets[count.index]["subnet_name"]
-  cidr          = var.vpc_subnets[count.index]["subnet_cidr"]
-  gateway_ip    = var.vpc_subnets[count.index]["subnet_gateway_ip"]
+  for_each = local.vpc_subnets_map
+  
+  name          = each.key
+  cidr          = each.value.subnet_cidr
+  gateway_ip    = each.value.subnet_gateway_ip
   primary_dns   = var.primary_dns
   secondary_dns = var.secondary_dns
   vpc_id        = flexibleengine_vpc_v1.vpc[0].id
@@ -40,12 +40,14 @@ resource "flexibleengine_nat_gateway_v2" "nat_gateway" {
   }
 }
 
-## SNAT rules
-data "flexibleengine_vpc_subnet_v1" "snat_subnets" {
-  # get the subnet ids of subnets in vpc_snat_subnets list
-  count      = var.create_vpc && length(var.vpc_snat_subnets) > 0 ? length(var.vpc_snat_subnets) : 0
-  name       = element(var.vpc_snat_subnets, count.index)
-  depends_on = [flexibleengine_vpc_subnet_v1.vpc_subnets]
+locals {
+ 
+  vpc_subnets_keys = [for subnet in var.vpc_subnets : subnet.subnet_name]
+  vpc_subnets_values = [for subnet in var.vpc_subnets : subnet]
+  vpc_subnets_map = zipmap(local.vpc_subnets_keys, local.vpc_subnets_values)
+
+  vpc_snat_subnets_map_network_id = zipmap(var.vpc_snat_subnets, var.vpc_snat_subnets)
+
 }
 
 resource "flexibleengine_vpc_eip_v1" "new_eip" {
@@ -64,13 +66,9 @@ resource "flexibleengine_vpc_eip_v1" "new_eip" {
 
 resource "flexibleengine_nat_snat_rule_v2" "snat" {
   # Create SNAT Rules
-  count = var.create_vpc && length(var.vpc_snat_subnets) > 0 ? length(var.vpc_snat_subnets) : 0
-
+  for_each = local.vpc_snat_subnets_map_network_id
+  
   nat_gateway_id = flexibleengine_nat_gateway_v2.nat_gateway[0].id
-  network_id     = data.flexibleengine_vpc_subnet_v1.snat_subnets[count.index].id
+  network_id=flexibleengine_vpc_subnet_v1.vpc_subnets[each.value].id
   floating_ip_id = var.new_eip ? flexibleengine_vpc_eip_v1.new_eip[0].id : var.existing_eip_id
-
-  lifecycle {
-    ignore_changes = [network_id]
-  }
 }
