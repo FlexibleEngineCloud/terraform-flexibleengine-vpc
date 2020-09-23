@@ -10,7 +10,7 @@ output "vpc_name" {
 
 output "subnet_ids" {
   description = "list of IDs of the created subnets"
-  value       = flexibleengine_vpc_subnet_v1.vpc_subnets.*.subnet_id
+  value       = [for subnet in flexibleengine_vpc_subnet_v1.vpc_subnets : subnet.subnet_id]
 }
 
 output "gateway_id" {
@@ -20,7 +20,7 @@ output "gateway_id" {
 
 output "network_ids" {
   description = "list of IDs of the created networks"
-  value       = flexibleengine_vpc_subnet_v1.vpc_subnets.*.id
+  value       = [for subnet in flexibleengine_vpc_subnet_v1.vpc_subnets : subnet.id]
 }
 
 output "snat_eip" {
