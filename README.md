@@ -3,7 +3,7 @@
 
 Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rules on Flexible Engine
 
-## TF Version : 0.12
+## Terraform Version
 
 > **Important Note regarding update from v1.2.0 to v1.3.0**
 >
@@ -13,11 +13,41 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 >
 > But now, you can reserve public IP (EIP) thanks to terraform-flexibleegine-eip module and assign it to your SNAT rules with this terraform-flexibleegine-vpc module.
 
+## Module Version
+
+> **Important Notes regarding update module from v2.0.1 and earlier to v 2.1.0 and later**
+
+
+> **Note #1**
+>
+> A compatibility break has been introduced in new module version 2.1.0. The subnets list is no more compute as a list but as a map.
+> This will allow developpers to remove or add a subnet in the middle of the list and prevent the module from deleting and re-creating the subnets in the list after the added or removed item.
+> 
+> A shell script `upgradTFState.sh` will help you in updating the Terraform state (modify subnet resource indexes by the neame of the subnets)
+> Run this shell script only one time right after the module version upgrade.
+>
+> The shell script will display the Terraform Plan. The subnet will remain in place and the SNat rules will be recreated according the subnet indexes. 
+>
+> You will have to run a `terraform apply` to re-create the SNAT rules. A short Internet access outage may be observed during the SNAT rules deletion and creation. You may also have to run twice the `terraform apply` command because SNAT rules creation may occure whereas SNAT rule deletion is not yet done.
+
+
+> **Note #2**
+>
+> The new subnets list management introduce a limitation: since the subnet list index is now based on subnet name, a change in the name will trigger a deletion / creation of the subnet.
+> To overcome this issue, please change the name subnet name thanks to Flexible ENgine web console and then update the Terrafrom state as following:
+>
+> `terraform state mv "module.vpc.flexibleengine_vpc_subnet_v1.vpc_subnets[\"old-subnet-name\"]" "module.vpc.flexibleengine_vpc_subnet_v1.vpc_subnets[\"new-subnet-name\"]"`
+>
+> If a SNAT rule is set on this subnet, please update the SNAT rule resource as well:
+>   
+> `terraform state mv "module.vpc.flexibleengine_nat_snat_rule_v2.snat[\"old-subnet-name\"]" "module.vpc.flexibleengine_nat_snat_rule_v2.snat[\"new-subnet-name\"]"`
+
 ## Usage : Terraform
 
 ```hcl
 module "vpc" {
   source = "FlexibleEngineCloud/vpc/flexibleengine"
+  version = "2.0.1"
 
   vpc_name = "my-vpc"
   vpc_cidr = "10.0.0.0/16"
@@ -62,8 +92,8 @@ module "vpc" {
 ################################
 
 terraform {
-  source = "git::https://github.com/terraform-flexibleengine-modules/terraform-flexibleengine-vpc"
-
+  source = "FlexibleEngineCloud/vpc/flexibleengine"
+  version = "2.0.1"
 }
 
 include {
