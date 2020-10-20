@@ -69,6 +69,6 @@ resource "flexibleengine_nat_snat_rule_v2" "snat" {
   for_each = local.vpc_snat_subnets_map_network_id
   
   nat_gateway_id = flexibleengine_nat_gateway_v2.nat_gateway[0].id
-  network_id=flexibleengine_vpc_subnet_v1.vpc_subnets[each.value].id
+  network_id=flexibleengine_vpc_subnet_v1.vpc_subnets[each.value.subnet_name].id
   floating_ip_id = var.new_eip ? flexibleengine_vpc_eip_v1.new_eip[0].id : var.existing_eip_id
 }
