@@ -11,8 +11,8 @@ resource "flexibleengine_vpc_subnet_v1" "vpc_subnets" {
   # Create subnets
   for_each = local.vpc_subnets_map
   
-  name          = each.key
-  cidr          = each.value.subnet_cidr
+  name          = each.value.subnet_name
+  cidr          = each.key
   gateway_ip    = each.value.subnet_gateway_ip
   primary_dns   = var.primary_dns
   secondary_dns = var.secondary_dns
@@ -42,7 +42,7 @@ resource "flexibleengine_nat_gateway_v2" "nat_gateway" {
 
 locals {
  
-  vpc_subnets_keys = [for subnet in var.vpc_subnets : subnet.subnet_name]
+  vpc_subnets_keys = [for subnet in var.vpc_subnets : subnet.subnet_cidr]
   vpc_subnets_values = [for subnet in var.vpc_subnets : subnet]
   vpc_subnets_map = zipmap(local.vpc_subnets_keys, local.vpc_subnets_values)
 
