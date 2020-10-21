@@ -23,6 +23,7 @@ variable "vpc_subnets" {
     subnet_name       = string
     subnet_cidr       = string
     subnet_gateway_ip = string
+    subnet_is_nat     = bool
   }))
 }
 
