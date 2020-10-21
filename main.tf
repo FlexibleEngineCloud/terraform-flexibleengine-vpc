@@ -51,7 +51,7 @@ locals {
 
   vpc_snat_subnets_map = zipmap(var.vpc_snat_subnets, var.vpc_snat_subnets)
   
-  vpc_subnets_snat_cidr = [for name in keys(var.vpc_snat_subnets_map) : [for subnet in [var.vpc_subnets]: subnet.subnet_cidr if subnet.subnet_name == name ]]
+  vpc_subnets_snat_cidr = [for name in keys(local.vpc_snat_subnets_map) : [for subnet in [var.vpc_subnets]: subnet.subnet_cidr if subnet.subnet_name == name ]]
   vpc_subnets_snat_cidr_map = zipmap(local.vpc_subnets_snat_cidr, local.vpc_subnets_snat_cidr)
 
 }
