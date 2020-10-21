@@ -49,8 +49,8 @@ locals {
   # vpc_snat_subnets_map_network_id = zipmap(var.vpc_snat_subnets, var.vpc_snat_subnets)
   # vpc_snat_subnets_map_network_id = zipmap(local.vpc_subnets_keys, local.vpc_subnets_keys)
  
-  vpc_subnets_snat_cidr = [for x in var.vpc_snat_subnets : [for y in var.vpc_subnets: y.subnet_cidr if y.subnet_name == x ]]
-  # vpc_subnets_snat_cidr_map = zipmap(local.vpc_subnets_snat_cidr, local.vpc_subnets_snat_cidr)
+  vpc_subnets_snat_cidr = flaten([for x in var.vpc_snat_subnets : [for y in var.vpc_subnets: y.subnet_cidr if y.subnet_name == x ]])
+  vpc_subnets_snat_cidr_map = zipmap(local.vpc_subnets_snat_cidr, local.vpc_subnets_snat_cidr)
 
 }
 
@@ -71,7 +71,7 @@ resource "flexibleengine_vpc_eip_v1" "new_eip" {
 resource "flexibleengine_nat_snat_rule_v2" "snat" {
   # Create SNAT Rules
   # for_each = local.vpc_snat_subnets_map_network_id
-  for_each = local.vpc_subnets_snat_cidr
+  for_each = local.vpc_subnets_snat_cidr_map
   
   nat_gateway_id = flexibleengine_nat_gateway_v2.nat_gateway[0].id
   network_id=flexibleengine_vpc_subnet_v1.vpc_subnets[each.value].id
