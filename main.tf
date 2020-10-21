@@ -46,7 +46,8 @@ locals {
   vpc_subnets_values = [for subnet in var.vpc_subnets : subnet]
   vpc_subnets_map = zipmap(local.vpc_subnets_keys, local.vpc_subnets_values)
 
-  vpc_snat_subnets_map_network_id = zipmap(var.vpc_snat_subnets, var.vpc_snat_subnets)
+  # vpc_snat_subnets_map_network_id = zipmap(var.vpc_snat_subnets, var.vpc_snat_subnets)
+  vpc_snat_subnets_map_network_id = zipmap(local.vpc_subnets_keys, local.vpc_subnets_keys)
 
 }
 
