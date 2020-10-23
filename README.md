@@ -6,7 +6,7 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 ## Terraform Version
 
 > **Important Note regarding update from v1.2.0 to v1.3.0**
->
+
 > If you use a NAT Gatewy and SNAT rules, switching module version from v1.2.0 to v1.3.0 will delete the current SNAT rule public IP and create a new one.
 >
 > Thus, ECSs outbound public IP will be replaced by a new one.
@@ -17,14 +17,15 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 
 > **Important Notes regarding update module from v2.0.1 and earlier to v 2.1.0 and later**
 
->
 > A compatibility break has been introduced in new module version 2.1.0. The subnets list is no more compute as a list but as a map.
 > This will allow developpers to remove or add a subnet in the middle of the list and prevent the module from deleting and re-creating the subnets in the list after the added or removed item.
-> 
+
 > A shell script `upgradTFState.sh` will help you in updating the Terraform state (modify subnet resource indexes by the CIDR of the subnets)
 > Run this shell script only one time, right after the module version upgrade.
 >
-> The shell script will display the Terraform Plan. The subnet will remain in place and the SNat rules will be recreated according the subnet indexes. 
+> Shell script available at: https://raw.githubusercontent.com/FlexibleEngineCloud/terraform-flexibleengine-vpc/upgrade-tfstate/upgradeTFState.sh
+
+> After `upgradTFState.sh` please run a `terraform plan` in order to chekch the subnet indexes have been modified by the script. SNAT rules will have to be re-create because they are also based on CIDR index.
 >
 > You will have to run a `terraform apply` to re-create the SNAT rules. A short Internet access outage may be observed during the SNAT rules deletion and creation. You may also have to run twice the `terraform apply` command because SNAT rules creation may occure whereas SNAT rule deletion is not yet done.
 

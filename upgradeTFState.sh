@@ -9,11 +9,14 @@ echo "Save current Terraform state to TerraformState_Save_${DATE}.tfstate "
 
 terraform state pull > TerraformState_Save_${DATE}.tfstate
 
-for resource in $(terraform state list | grep module.vpc.flexibleengine_vpc_subnet_v1.vpc_subnets)
+for vpc_module_name in $(terraform state list | grep flexibleengine_vpc_v1.vpc | awk -F"." '{print $2}')
 do
-	echo "Change ressource $resource to module.vpc.flexibleengine_vpc_subnet_v1.vpc_subnets[\"${INDEX_NAME}\"]"
-	INDEX_NAME=$(terraform state show "$resource" | grep cidr | awk -F"= " '{print $2}' | tr -d "\"")
-	terraform state mv "$resource" "module.vpc.flexibleengine_vpc_subnet_v1.vpc_subnets[\"${INDEX_NAME}\"]"
+	for resource in $(terraform state list | grep module.${vpc_module_name}.flexibleengine_vpc_subnet_v1.vpc_subnets)
+	do
+		echo
+		echo "Change ressource $resource to module.${vpc_module_name}.flexibleengine_vpc_subnet_v1.vpc_subnets[\"${INDEX_NAME}\"]"
+		INDEX_NAME=$(terraform state show -state TerraformState_Save_${DATE}.tfstate "$resource" | grep cidr | awk -F"= " '{print $2}' | tr -d "\"")
+		terraform state mv "$resource" "module.${vpc_module_name}.flexibleengine_vpc_subnet_v1.vpc_subnets[\"${INDEX_NAME}\"]"
+	done
 done
 
-terraform plan
