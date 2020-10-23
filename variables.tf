@@ -29,7 +29,7 @@ variable "vpc_subnets" {
 variable "vpc_snat_subnets" {
   description = "list of snat subnet names"
   default     = []
-  type = list
+  type        = list
 }
 
 variable "primary_dns" {
@@ -76,13 +76,13 @@ variable "new_eip" {
 
 variable "eip_bandwidth" {
   description = "Bandwidth of the EIP in Mbit/s"
-  default = null
+  default     = null
   type        = number
 }
 
 variable "existing_eip_id" {
   description = "ID of an existing EIP"
-  default = null
+  default     = null
   type        = string
 }
 

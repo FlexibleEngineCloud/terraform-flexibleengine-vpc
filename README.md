@@ -3,21 +3,39 @@
 
 Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rules on Flexible Engine
 
-## TF Version : 0.12
+## Terraform Version
 
 > **Important Note regarding update from v1.2.0 to v1.3.0**
->
+
 > If you use a NAT Gatewy and SNAT rules, switching module version from v1.2.0 to v1.3.0 will delete the current SNAT rule public IP and create a new one.
 >
 > Thus, ECSs outbound public IP will be replaced by a new one.
 >
 > But now, you can reserve public IP (EIP) thanks to terraform-flexibleegine-eip module and assign it to your SNAT rules with this terraform-flexibleegine-vpc module.
 
+## Module Version
+
+> **Important Notes regarding update module from v2.0.1 and earlier to v 2.1.0 and later**
+
+> A compatibility break has been introduced in new module version 2.1.0. The subnets list is no more compute as a list but as a map.
+> This will allow developpers to remove or add a subnet in the middle of the list and prevent the module from deleting and re-creating the subnets in the list after the added or removed item.
+
+> A shell script `upgradTFState.sh` will help you in updating the Terraform state (modify subnet resource indexes by the CIDR of the subnets)
+> Run this shell script only one time, right after the module version upgrade.
+>
+> Shell script available at: https://raw.githubusercontent.com/FlexibleEngineCloud/terraform-flexibleengine-vpc/upgrade-tfstate/upgradeTFState.sh
+
+> After `upgradTFState.sh` please run a `terraform plan` in order to chekch the subnet indexes have been modified by the script. SNAT rules will have to be re-create because they are also based on CIDR index.
+>
+> You will have to run a `terraform apply` to re-create the SNAT rules. A short Internet access outage may be observed during the SNAT rules deletion and creation. The first attempt may fail and you you may also have to run twice the `terraform apply` command because SNAT rules creation can occure whereas SNAT rule deletion is not yet finished.
+
+
 ## Usage : Terraform
 
 ```hcl
 module "vpc" {
   source = "FlexibleEngineCloud/vpc/flexibleengine"
+  version = "2.1.0"
 
   vpc_name = "my-vpc"
   vpc_cidr = "10.0.0.0/16"
@@ -62,8 +80,8 @@ module "vpc" {
 ################################
 
 terraform {
-  source = "git::https://github.com/terraform-flexibleengine-modules/terraform-flexibleengine-vpc"
-
+  source = "FlexibleEngineCloud/vpc/flexibleengine"
+  version = "2.1.0"
 }
 
 include {
