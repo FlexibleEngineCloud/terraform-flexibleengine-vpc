@@ -35,7 +35,7 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 ```hcl
 module "vpc" {
   source = "FlexibleEngineCloud/vpc/flexibleengine"
-  version = "2.0.1"
+  version = "2.1.0"
 
   vpc_name = "my-vpc"
   vpc_cidr = "10.0.0.0/16"
@@ -81,7 +81,7 @@ module "vpc" {
 
 terraform {
   source = "FlexibleEngineCloud/vpc/flexibleengine"
-  version = "2.0.1"
+  version = "2.1.0"
 }
 
 include {
