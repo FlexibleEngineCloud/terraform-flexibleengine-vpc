@@ -1,5 +1,7 @@
 module "vpc" {
-  source = "../.."
+  source  = "FlexibleEngineCloud/vpc/flexibleengine"
+  version = "2.1.0"
+
   vpc_name = "vpc_example"
   vpc_cidr = "10.0.0.0/16"
 
@@ -18,10 +20,10 @@ module "vpc" {
 
   vpc_snat_subnets = ["subnet-0"]
 
-  enable_nat_gateway = true
+  enable_nat_gateway      = true
   existing_eip_id         = "<EIP_ID>"
-  eip_bandwidth = 500
-  nat_gateway_name = "natg-0"
-  nat_gateway_type = "1"
+  eip_bandwidth           = 500
+  nat_gateway_name        = "natg-0"
+  nat_gateway_type        = "1"
   nat_gateway_subnet_name = "subnet-0"
 }
