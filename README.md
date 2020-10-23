@@ -27,7 +27,7 @@ Terraform module which creates VPC, subnets, NAT gateway resources and SNAT rule
 
 > After `upgradTFState.sh` please run a `terraform plan` in order to chekch the subnet indexes have been modified by the script. SNAT rules will have to be re-create because they are also based on CIDR index.
 >
-> You will have to run a `terraform apply` to re-create the SNAT rules. A short Internet access outage may be observed during the SNAT rules deletion and creation. You may also have to run twice the `terraform apply` command because SNAT rules creation may occure whereas SNAT rule deletion is not yet done.
+> You will have to run a `terraform apply` to re-create the SNAT rules. A short Internet access outage may be observed during the SNAT rules deletion and creation. The first attempt may fail and you you may also have to run twice the `terraform apply` command because SNAT rules creation can occure whereas SNAT rule deletion is not yet finished.
 
 
 ## Usage : Terraform
