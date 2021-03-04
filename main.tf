@@ -47,7 +47,7 @@ locals {
   vpc_subnets_map    = zipmap(local.vpc_subnets_keys, local.vpc_subnets_values)
 
   vpc_subnets_snat_cidr     = flatten([for name in var.vpc_snat_subnets : [for subnet in var.vpc_subnets : subnet.subnet_cidr if subnet.subnet_name == name]])
-  vpc_subnets_snat_cidr_map = zipmap(local.vpc_subnets_snat_cidr, local.vpc_subnets_snat_cidr)
+  vpc_subnets_snat_cidr_map = var.enable_nat_gateway ? zipmap(local.vpc_subnets_snat_cidr, local.vpc_subnets_snat_cidr) : {}
 
 }
 
