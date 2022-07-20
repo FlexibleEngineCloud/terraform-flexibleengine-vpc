@@ -29,7 +29,7 @@ variable "vpc_subnets" {
 variable "vpc_snat_subnets" {
   description = "list of snat subnet names"
   default     = []
-  type        = list
+  type        = list(any)
 }
 
 variable "primary_dns" {

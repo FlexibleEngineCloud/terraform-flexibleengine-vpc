@@ -30,13 +30,13 @@ resource "flexibleengine_nat_gateway_v2" "nat_gateway" {
   # Create the NAT Gateway
   count = var.create_vpc && var.enable_nat_gateway ? 1 : 0
 
-  name                = var.nat_gateway_name
-  spec                = var.nat_gateway_type
-  router_id           = flexibleengine_vpc_v1.vpc[0].id
-  internal_network_id = data.flexibleengine_vpc_subnet_v1.nat_gateway_subnet[0].id
+  name      = var.nat_gateway_name
+  spec      = var.nat_gateway_type
+  vpc_id    = flexibleengine_vpc_v1.vpc[0].id
+  subnet_id = data.flexibleengine_vpc_subnet_v1.nat_gateway_subnet[0].id
 
   lifecycle {
-    ignore_changes = [internal_network_id]
+    ignore_changes = [subnet_id]
   }
 }
 
@@ -70,6 +70,6 @@ resource "flexibleengine_nat_snat_rule_v2" "snat" {
   for_each = local.vpc_subnets_snat_cidr_map
 
   nat_gateway_id = flexibleengine_nat_gateway_v2.nat_gateway[0].id
-  network_id     = flexibleengine_vpc_subnet_v1.vpc_subnets[each.value].id
+  subnet_id      = flexibleengine_vpc_subnet_v1.vpc_subnets[each.value].id
   floating_ip_id = var.new_eip ? flexibleengine_vpc_eip_v1.new_eip[0].id : var.existing_eip_id
 }
